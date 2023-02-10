@@ -80,14 +80,14 @@ public class Controller implements Initializable {
                     }
                 }
             });
-//            filesOnServer(serverDir);
+            filesOnServer(serverDir);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void до(File serverDir) {
+    private void filesOnServer(File serverDir) {
         if (!serverDir.exists()) {
             throw new RuntimeException("directory resource not exists on server");
         }

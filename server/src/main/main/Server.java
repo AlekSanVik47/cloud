@@ -15,7 +15,7 @@ public class Server {
             System.out.println("server started");
             while (true) {
                 Socket socket = server.accept();
-                executor.execute(new ConnectionHandler(socket));
+                executor.execute(new main.ConnectionHandler(socket));
             }
         } catch (Exception e) {
             e.printStackTrace();
