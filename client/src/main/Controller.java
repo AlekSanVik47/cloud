@@ -21,8 +21,10 @@ public class Controller implements Initializable {
 
     public Button send;
     public ListView<String> listView;
+    public ListView<String> listViewServer;
     public TextField text;
     private List<File> clientFileList;
+    private List<File> serverFileList;
     public static Socket socket;
     private DataInputStream is;
     private DataOutputStream os;
@@ -40,8 +42,11 @@ public class Controller implements Initializable {
             os = new DataOutputStream(socket.getOutputStream());
             Thread.sleep(1000);
             clientFileList = new ArrayList<>();
+            serverFileList = new ArrayList<>();
             String clientPath = "./client/src/main/resources/";
+            String serverPath ="./server/src/main/resources/";
             File dir = new File(clientPath);
+            File serverDir = new File(serverPath);
             if (!dir.exists()) {
                 throw new RuntimeException("directory resource not exists on client");
             }
@@ -67,15 +72,54 @@ public class Controller implements Initializable {
                             os.flush();
                             String response = is.readUTF();
                             System.out.println(response);
+//                            os.close();
+//                            is.close();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
                 }
             });
+//            filesOnServer(serverDir);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void до(File serverDir) {
+        if (!serverDir.exists()) {
+            throw new RuntimeException("directory resource not exists on server");
+        }
+        for (File file : Objects.requireNonNull(serverDir.listFiles())) {
+            serverFileList.add(file);
+            listViewServer.getItems().add(file.getName() + ": " + file.length());
+        }
+//        listViewServer.setOnMouseClicked(b ->{
+//            if (b.getButton().name().equals("SEND")){
+//                String fileName = listViewServer.getSelectionModel().getSelectedItem();
+//                File currentFile = findFileByName(fileName);
+//                if (currentFile !=null) {
+//                    try {
+//                        os.writeUTF("./download");
+//                        os.writeUTF(fileName);
+//                        os.writeLong(currentFile.length());
+//                        FileInputStream fis = new FileInputStream(currentFile);
+//                        byte [] buffer = new byte[1024];
+//                        while (fis.available() > 0) {
+//                            int bytesRead = fis.read(buffer);
+//                            os.write(buffer, 0, bytesRead);
+//                        }
+//                        os.flush();
+//                        String response = is.readUTF();
+//                        System.out.println(response);
+//
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        });
     }
 
     private File findFileByName(String fileName) {
@@ -88,6 +132,6 @@ public class Controller implements Initializable {
         }
         return null;
     }
-
+    //downloadFromServer
 
 }
