@@ -95,6 +95,7 @@ public class Controller implements Initializable {
             serverFileList.add(file);
             listViewServer.getItems().add(file.getName() + ": " + file.length());
         }
+
 //        listViewServer.setOnMouseClicked(b ->{
 //            if (b.getButton().name().equals("SEND")){
 //                String fileName = listViewServer.getSelectionModel().getSelectedItem();
