@@ -6,10 +6,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.*;
 import java.net.Socket;
 import java.net.URL;
 import java.util.ArrayList;
@@ -23,6 +20,7 @@ public class Controller implements Initializable {
     public ListView<String> listView;
     public ListView<String> listViewServer;
     public TextField text;
+    public String enteredText;
     private List<File> clientFileList;
     private List<File> serverFileList;
     public static Socket socket;
@@ -61,19 +59,8 @@ public class Controller implements Initializable {
                     if (currentFile !=null) {
                         try {
                             os.writeUTF("./upload");
-                            os.writeUTF(fileName);
-                            os.writeLong(currentFile.length());
-                            FileInputStream fis = new FileInputStream(currentFile);
-                            byte [] buffer = new byte[1024];
-                            while (fis.available() > 0) {
-                                int bytesRead = fis.read(buffer);
-                                os.write(buffer, 0, bytesRead);
-                            }
-                            os.flush();
-                            String response = is.readUTF();
-                            System.out.println(response);
-//                            os.close();
-//                            is.close();
+                            writeFile(fileName, currentFile);
+                            //socket.close();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -96,31 +83,46 @@ public class Controller implements Initializable {
             listViewServer.getItems().add(file.getName() + ": " + file.length());
         }
 
-//        listViewServer.setOnMouseClicked(b ->{
-//            if (b.getButton().name().equals("SEND")){
-//                String fileName = listViewServer.getSelectionModel().getSelectedItem();
-//                File currentFile = findFileByName(fileName);
-//                if (currentFile !=null) {
-//                    try {
-//                        os.writeUTF("./download");
-//                        os.writeUTF(fileName);
-//                        os.writeLong(currentFile.length());
-//                        FileInputStream fis = new FileInputStream(currentFile);
-//                        byte [] buffer = new byte[1024];
-//                        while (fis.available() > 0) {
-//                            int bytesRead = fis.read(buffer);
-//                            os.write(buffer, 0, bytesRead);
-//                        }
-//                        os.flush();
-//                        String response = is.readUTF();
-//                        System.out.println(response);
-//
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//        });
+
+        text.setOnAction(b -> {
+            if (b.equals(serverFileList.contains(
+
+                    findFileByName(getEnteredText(enteredText))))) {
+                if (send.isPressed()) {
+                    String fileName = listViewServer.getSelectionModel().getSelectedItem();
+                    File currentFile = findFileByName(fileName);
+                    if (currentFile != null) {
+                        try {
+                            os.writeUTF("./download");
+                            writeFile(fileName, currentFile);
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
+        });
+    }
+
+    private String getEnteredText(String str) {
+       text.setText(str);
+        return text.getText();
+    }
+
+    private void writeFile(String fileName, File currentFile) throws IOException {
+        os.writeUTF(fileName);
+        os.writeLong(currentFile.length());
+        FileInputStream fis = new FileInputStream(currentFile);
+        byte[] buffer = new byte[1024];
+        while (fis.available() > 0) {
+            int bytesRead = fis.read(buffer);
+            os.write(buffer, 0, bytesRead);
+        }
+        os.flush();
+        String response = is.readUTF();
+        System.out.println(response);
     }
 
     private File findFileByName(String fileName) {
