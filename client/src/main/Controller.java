@@ -84,26 +84,26 @@ public class Controller implements Initializable {
         }
 
 
-        text.setOnAction(b -> {
-            if (b.equals(serverFileList.contains(
-
-                    findFileByName(getEnteredText(enteredText))))) {
-                if (send.isPressed()) {
-                    String fileName = listViewServer.getSelectionModel().getSelectedItem();
-                    File currentFile = findFileByName(fileName);
-                    if (currentFile != null) {
-                        try {
-                            os.writeUTF("./download");
-                            writeFile(fileName, currentFile);
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-
-        });
+//        text.setOnAction(b -> {
+//            if (b.equals(serverFileList.contains(
+//
+//                    findFileByName(getEnteredText(enteredText))))) {
+//                if (send.isPressed()) {
+//                    String fileName = listViewServer.getSelectionModel().getSelectedItem();
+//                    File currentFile = findFileByName(fileName);
+//                    if (currentFile != null) {
+//                        try {
+//                            os.writeUTF("./download");
+//                            writeFile(fileName, currentFile);
+//
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }
+//            }
+//
+//        });
     }
 
     private String getEnteredText(String str) {
