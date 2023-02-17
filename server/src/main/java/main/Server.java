@@ -10,15 +10,17 @@ public class Server {
     public final static String serverPath = "./server/src/main/resources";
 
     public static void main(String[] args) {
-        try(ServerSocket server = new ServerSocket(8189)) {
+        Socket socket;
+        try (ServerSocket server = new ServerSocket(8189)) {
             ExecutorService executor = Executors.newFixedThreadPool(4);
             System.out.println("server started");
             while (true) {
-                Socket socket = server.accept();
+                socket = server.accept();
                 executor.execute(new main.ConnectionHandler(socket));
             }
         } catch (Exception e) {
             e.printStackTrace();
+
         }
     }
 }

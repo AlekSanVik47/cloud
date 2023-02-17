@@ -28,6 +28,8 @@ public class Controller implements Initializable {
     private DataOutputStream os;
 
     public void sendCommand(ActionEvent actionEvent) {
+//        if (text.hasProperties())
+//            text.getText().equals(findFileByName(serverFileList.contains(enteredText)))
         System.out.println("SEND!");
     }
 
@@ -35,13 +37,10 @@ public class Controller implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         // TODO: init connect to server
         try{
-            socket = new Socket("localhost", 8189);
-            is = new DataInputStream(socket.getInputStream());
-            os = new DataOutputStream(socket.getOutputStream());
-            Thread.sleep(1000);
+            connect();
             clientFileList = new ArrayList<>();
             serverFileList = new ArrayList<>();
-            String clientPath = "./client/src/main/resources/";
+            String clientPath ="./client/src/main/resources/";
             String serverPath ="./server/src/main/resources/";
             File dir = new File(clientPath);
             File serverDir = new File(serverPath);
@@ -74,7 +73,21 @@ public class Controller implements Initializable {
         }
     }
 
-    private void filesOnServer(File serverDir) {
+    public boolean connect(){
+        try {
+            socket = new Socket("localhost", 8189);
+            is = new DataInputStream(socket.getInputStream());
+            os = new DataOutputStream(socket.getOutputStream());
+            Thread.sleep(1000);
+            return true;
+        } catch (IOException | InterruptedException e) {
+            System.err.println("Соединение не было установлено!");
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public void filesOnServer(File serverDir) {
         if (!serverDir.exists()) {
             throw new RuntimeException("directory resource not exists on server");
         }
@@ -112,6 +125,7 @@ public class Controller implements Initializable {
     }
 
     private void writeFile(String fileName, File currentFile) throws IOException {
+
         os.writeUTF(fileName);
         os.writeLong(currentFile.length());
         FileInputStream fis = new FileInputStream(currentFile);
@@ -120,6 +134,7 @@ public class Controller implements Initializable {
             int bytesRead = fis.read(buffer);
             os.write(buffer, 0, bytesRead);
         }
+        fis.close();
         os.flush();
         String response = is.readUTF();
         System.out.println(response);
